@@ -21,7 +21,7 @@ export default async function runExecutor(
   const assetHandler = new CopyAssetsHandler({
     projectDir: projectRoot,
     rootDir: context.root,
-    outputDir: outputPath,
+    outputDir: resolve(context.root, outputPath),
     assets: assets,
   })
 

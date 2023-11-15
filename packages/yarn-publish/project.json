@@ -13,7 +13,7 @@
         "tsConfig": "packages/yarn-publish/tsconfig.lib.json",
         "assets": [
           "packages/yarn-publish/*.md",
-          "packages/tsup/LICENSE",
+          "packages/yarn-publish/LICENSE",
           {
             "input": "./packages/yarn-publish/src",
             "glob": "**/!(*.ts)",
