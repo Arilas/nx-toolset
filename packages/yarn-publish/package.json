@@ -6,6 +6,11 @@
     "email": "alex@granted.name"
   },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Arilas/nx-toolset.git",
+    "directory": "packages/yarn-publish"
+  },
   "dependencies": {
     "@nx/devkit": "^17.1.2",
     "@nx/workspace": "^17.1.2",
