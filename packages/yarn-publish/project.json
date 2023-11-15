@@ -1,0 +1,56 @@
+{
+  "name": "nx-yarn-publish",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/yarn-publish/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/yarn-publish",
+        "main": "packages/yarn-publish/src/index.ts",
+        "tsConfig": "packages/yarn-publish/tsconfig.lib.json",
+        "assets": [
+          "packages/yarn-publish/*.md",
+          "packages/tsup/LICENSE",
+          {
+            "input": "./packages/yarn-publish/src",
+            "glob": "**/!(*.ts)",
+            "output": "./src"
+          },
+          {
+            "input": "./packages/yarn-publish/src",
+            "glob": "**/*.d.ts",
+            "output": "./src"
+          },
+          {
+            "input": "./packages/yarn-publish",
+            "glob": "generators.json",
+            "output": "."
+          },
+          {
+            "input": "./packages/yarn-publish",
+            "glob": "executors.json",
+            "output": "."
+          }
+        ]
+      }
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs nx-yarn-publish {args.ver} {args.tag}",
+      "dependsOn": ["build"]
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "packages/yarn-publish/**/*.ts",
+          "packages/yarn-publish/package.json"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

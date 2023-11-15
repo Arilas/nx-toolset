@@ -1,0 +1,158 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "version": 2,
+  "title": "Build executor",
+  "description": "",
+  "type": "object",
+  "properties": {
+    "main": {
+      "$ref": "#/definitions/entryPattern",
+      "description": "The entry point for the build or an object defining the entry points"
+    },
+    "tsConfig": {
+      "type": "string",
+      "description": "The path to the tsconfig file",
+      "default": "tsconfig.json"
+    },
+    "target": {
+      "type": "string",
+      "default": "node16",
+      "description": "The target to build for"
+    },
+    "minify": {
+      "type": "boolean",
+      "default": false,
+      "description": "Minify the output"
+    },
+    "watch": {
+      "type": "boolean",
+      "default": false,
+      "description": "Watch for changes and rebuild"
+    },
+    "sourceMap": {
+      "type": "boolean",
+      "default": false,
+      "description": "Generate source maps"
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/assetPattern"
+      },
+      "description": "Assets to copy to the output directory"
+    },
+    "typings": {
+      "type": "boolean",
+      "default": false,
+      "description": "Generate typings"
+    },
+    "jsxFactory": {
+      "type": "string",
+      "description": "The JSX factory to use"
+    },
+    "jsxFragment": {
+      "type": "string",
+      "description": "The JSX fragment to use"
+    },
+    "noExternal": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Always bundle modules matching given patterns"
+    },
+    "silent": {
+      "type": "boolean",
+      "default": false,
+      "description": "Suppress output"
+    },
+    "external": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "External modules to exclude from the bundle"
+    },
+    "clean": {
+      "type": "boolean",
+      "default": false,
+      "description": "Clean the output directory before building"
+    },
+    "metafile": {
+      "type": "boolean",
+      "default": false,
+      "description": "Generate a metafile"
+    },
+    "platform": {
+      "type": "string",
+      "default": "node",
+      "enum": ["node", "browser", "neutral"],
+      "description": "The platform to build for"
+    },
+    "outputPath": {
+      "type": "string",
+      "description": "The output path of the generated files relative to workspace root",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "x-completion-type": "directory",
+      "x-prompt": "Which folder should be published?"
+    }
+  },
+  "required": ["main", "outputPath"],
+  "definitions": {
+    "entryPattern": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "assetPattern": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "glob": {
+              "type": "string",
+              "description": "The pattern to match."
+            },
+            "input": {
+              "type": "string",
+              "description": "The input directory path in which to apply 'glob'. Defaults to the project root."
+            },
+            "ignore": {
+              "description": "An array of globs to ignore.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "output": {
+              "type": "string",
+              "description": "Absolute path within the output."
+            }
+          },
+          "additionalProperties": false,
+          "required": ["glob", "input", "output"]
+        },
+        {
+          "type": "string"
+        }
+      ]
+    }
+  }
+}

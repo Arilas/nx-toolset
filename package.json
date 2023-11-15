@@ -1,0 +1,37 @@
+{
+  "name": "nx-toolset",
+  "packageManager": "yarn@4.0.0",
+  "devDependencies": {
+    "@ianvs/prettier-plugin-sort-imports": "^4.1.1",
+    "@nx/eslint": "17.1.2",
+    "@nx/eslint-plugin": "17.1.2",
+    "@nx/jest": "17.1.2",
+    "@nx/js": "17.1.2",
+    "@nx/plugin": "^17.1.2",
+    "@swc-node/register": "~1.6.8",
+    "@swc/cli": "~0.1.62",
+    "@swc/core": "~1.3.96",
+    "@types/node": "20.9.0",
+    "@typescript-eslint/eslint-plugin": "^6.11.0",
+    "@typescript-eslint/parser": "^6.11.0",
+    "eslint": "~8.53.0",
+    "eslint-config-prettier": "^9.0.0",
+    "nx": "17.1.2",
+    "prettier": "^3.1.0",
+    "typescript": "~5.2.2"
+  },
+  "workspaces": [
+    "packages/tsup",
+    "packages/yarn-publish"
+  ],
+  "nx": {
+    "targets": {}
+  },
+  "dependencies": {
+    "@nx/devkit": "17.1.2",
+    "@swc/helpers": "~0.5.3",
+    "nx-tsup": "workspace:^",
+    "nx-yarn-publish": "workspace:^",
+    "tslib": "^2.6.2"
+  }
+}

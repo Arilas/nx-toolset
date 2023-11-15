@@ -1,0 +1,61 @@
+{
+  "name": "nx-tsup",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/tsup/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/tsup",
+        "main": "packages/tsup/src/index.ts",
+        "tsConfig": "packages/tsup/tsconfig.lib.json",
+        "assets": [
+          "packages/tsup/*.md",
+          "packages/tsup/LICENSE",
+          {
+            "input": "./packages/tsup/src",
+            "glob": "**/!(*.ts)",
+            "output": "./src"
+          },
+          {
+            "input": "./packages/tsup/src",
+            "glob": "**/*.d.ts",
+            "output": "./src"
+          },
+          {
+            "input": "./packages/tsup",
+            "glob": "generators.json",
+            "output": "."
+          },
+          {
+            "input": "./packages/tsup",
+            "glob": "executors.json",
+            "output": "."
+          }
+        ]
+      }
+    },
+    "publish": {
+      "executor": "nx-yarn-publish:publish",
+      "dependsOn": ["build"],
+      "options": {
+        "outputPath": "dist/packages/tsup",
+        "access": "public"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "packages/tsup/**/*.ts",
+          "packages/tsup/package.json",
+          "packages/tsup/executors.json"
+        ]
+      }
+    }
+  },
+  "tags": []
+}
