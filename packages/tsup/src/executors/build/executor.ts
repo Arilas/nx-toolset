@@ -59,7 +59,6 @@ export default async function runExecutor(
       },
     })
   } catch (error) {
-    console.log(error)
     if (unregisterWatchAssets) {
       unregisterWatchAssets()
     }
