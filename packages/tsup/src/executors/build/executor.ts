@@ -7,9 +7,8 @@ import { build } from 'tsup'
 import { ExecutorContext } from '@nx/devkit'
 import { CopyAssetsHandler } from '@nx/js/src/utils/assets/copy-assets-handler'
 import { checkDependencies } from '@nx/js/src/utils/check-dependencies'
-import { createEntryPoints } from '@nx/js/src/utils/package-json/create-entry-points'
-import { updatePackageJson } from '@nx/js/src/utils/package-json/update-package-json'
 
+import { updatePackageJson } from '../../utils/package-json/update-package-json'
 import type { BuildExecutorSchema } from './schema'
 
 export default async function runExecutor(
@@ -50,6 +49,10 @@ export default async function runExecutor(
     context,
     options.tsConfig,
   )
+  console.log('outputPath', outputPath)
+  console.log('context.root', context.root)
+  console.log('projectRoot', projectRoot)
+  console.log('tmpTsConfig', tmpTsConfig)
   if (tmpTsConfig) {
     options.tsConfig = tmpTsConfig
   }
@@ -87,6 +90,9 @@ export default async function runExecutor(
     )
   }
 
+  console.log('entryPoint', entryPoint)
+  console.log('additionalEntryPoints', additionalEntryPoints)
+
   try {
     // Change directory to the project root so that tsup will be able to find the tsconfig.json and look for the package.json dependencies
     chdir(projectRoot)
@@ -113,14 +119,10 @@ export default async function runExecutor(
           updatePackageJson(
             {
               ...options,
-              main: resolve(outDir ?? 'dist', entryPoint),
+              outputPath: resolve(context.root, outputPath),
+              entries: typeof main === 'string' ? [main] : main,
+              outDir: outDir ?? 'dist',
               projectRoot,
-              additionalEntryPoints: createEntryPoints(
-                additionalEntryPoints.map((item) =>
-                  resolve(outDir ?? 'dist', item),
-                ),
-                context.root,
-              ),
               // @ts-expect-error iife is not a valid format for tsup
               format:
                 typeof options.format === 'string'
