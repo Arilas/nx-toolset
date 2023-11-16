@@ -252,7 +252,7 @@ export function getExports(
     '.': {
       [isEsm ? 'import' : 'require']: options.typings
         ? {
-            types: relativeMainFileDir + mainFile + '.d.' + options.fileExt,
+            types: relativeMainFileDir + mainFile + '.d' + options.fileExt,
             default: relativeMainFileDir + mainFile + options.fileExt,
           }
         : {
@@ -266,7 +266,7 @@ export function getExports(
       exports[`./${key}`] = {
         [isEsm ? 'import' : 'require']: options.typings
           ? {
-              types: relativeMainFileDir + key + '.d.' + options.fileExt,
+              types: relativeMainFileDir + key + '.d' + options.fileExt,
               default: relativeMainFileDir + key + options.fileExt,
             }
           : {
