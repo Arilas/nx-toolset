@@ -20,7 +20,7 @@ export default async function runExecutor(
     tsConfig,
     typings,
     sourceMap,
-    assets,
+    assets = [],
     ...rest
   } = options
   const projectRoot = resolve(
@@ -61,13 +61,13 @@ export default async function runExecutor(
       ...rest,
       entry:
         typeof main === 'string'
-          ? [resolve(context.root, main)]
+          ? [resolveEntry(main, context.root, projectRoot)]
           : Array.isArray(main)
-            ? main.map((item) => resolve(context.root, item))
+            ? main.map((item) => resolveEntry(item, context.root, projectRoot))
             : Object.keys(main).reduce(
                 (acc, key) => ({
                   ...acc,
-                  [key]: resolve(context.root, main[key]),
+                  [key]: resolveEntry(main[key], context.root, projectRoot),
                 }),
                 {},
               ),
@@ -103,4 +103,10 @@ export default async function runExecutor(
   return {
     success: true,
   }
+}
+
+function resolveEntry(entry: string, contextRoot: string, projectRoot: string) {
+  return entry.startsWith('.')
+    ? resolve(contextRoot, projectRoot, entry)
+    : resolve(contextRoot, entry)
 }
