@@ -1,4 +1,6 @@
+import { rmdir } from 'node:fs/promises'
 import { resolve } from 'node:path'
+import { chdir, cwd } from 'node:process'
 
 import { build } from 'tsup'
 
@@ -26,6 +28,21 @@ export default async function runExecutor(
     context.workspace.projects[context.projectName].root,
   )
 
+  if (options.clean) {
+    try {
+      await rmdir(resolve(context.root, outputPath), {
+        recursive: true,
+      })
+    } catch (error) {
+      if (error.code !== 'ENOENT') {
+        return {
+          success: false,
+          error: error,
+        }
+      }
+    }
+  }
+
   const assetHandler = new CopyAssetsHandler({
     projectDir: projectRoot,
     rootDir: context.root,
@@ -35,8 +52,11 @@ export default async function runExecutor(
 
   let assetsCopied = false
   let unregisterWatchAssets: () => void | null = null
+  const originalCwd = cwd()
 
   try {
+    // Change directory to the project root so that tsup will be able to find the tsconfig.json and look for the package.json dependencies
+    chdir(projectRoot)
     await build({
       ...rest,
       entry:
@@ -75,6 +95,7 @@ export default async function runExecutor(
       error: error,
     }
   }
+  chdir(originalCwd)
 
   if (unregisterWatchAssets) {
     unregisterWatchAssets()

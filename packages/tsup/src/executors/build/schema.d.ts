@@ -5,6 +5,7 @@ export interface BuildExecutorSchema {
   assets?: string[]
   outputPath: string
   outDir?: Options['outDir']
+  clean?: boolean
   sourceMap?: Options['sourcemap']
   typings?: Options['dts']
   watch?: boolean
