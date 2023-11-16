@@ -1,4 +1,4 @@
-import { rmdir } from 'node:fs/promises'
+import { rm } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { chdir, cwd } from 'node:process'
 
@@ -30,7 +30,7 @@ export default async function runExecutor(
 
   if (options.clean) {
     try {
-      await rmdir(resolve(context.root, outputPath), {
+      await rm(resolve(context.root, outputPath), {
         recursive: true,
       })
     } catch (error) {
