@@ -105,6 +105,11 @@
       "default": "dist",
       "x-completion-type": "directory",
       "x-prompt": "Which folder should be published?"
+    },
+    "generateExportsField": {
+      "type": "boolean",
+      "default": true,
+      "description": "Generate an exports field in package.json"
     }
   },
   "required": ["main", "outputPath"],

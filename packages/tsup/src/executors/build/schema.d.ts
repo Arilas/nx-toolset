@@ -5,6 +5,8 @@ export interface BuildExecutorSchema {
   assets?: string[]
   outputPath: string
   outDir?: Options['outDir']
+  generateExportsField?: boolean
+  format?: Options['format']
   clean?: boolean
   sourceMap?: Options['sourcemap']
   typings?: Options['dts']

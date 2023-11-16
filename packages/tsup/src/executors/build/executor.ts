@@ -6,6 +6,9 @@ import { build } from 'tsup'
 
 import { ExecutorContext } from '@nx/devkit'
 import { CopyAssetsHandler } from '@nx/js/src/utils/assets/copy-assets-handler'
+import { checkDependencies } from '@nx/js/src/utils/check-dependencies'
+import { createEntryPoints } from '@nx/js/src/utils/package-json/create-entry-points'
+import { updatePackageJson } from '@nx/js/src/utils/package-json/update-package-json'
 
 import type { BuildExecutorSchema } from './schema'
 
@@ -23,10 +26,10 @@ export default async function runExecutor(
     assets = [],
     ...rest
   } = options
-  const projectRoot = resolve(
-    context.root,
-    context.workspace.projects[context.projectName].root,
-  )
+  // const projectRoot = resolve(
+  //   context.root,
+  //   context.workspace.projects[context.projectName].root,
+  // )
 
   if (options.clean) {
     try {
@@ -43,6 +46,14 @@ export default async function runExecutor(
     }
   }
 
+  const { projectRoot, tmpTsConfig, target, dependencies } = checkDependencies(
+    context,
+    options.tsConfig,
+  )
+  if (tmpTsConfig) {
+    options.tsConfig = tmpTsConfig
+  }
+
   const assetHandler = new CopyAssetsHandler({
     projectDir: projectRoot,
     rootDir: context.root,
@@ -53,6 +64,28 @@ export default async function runExecutor(
   let assetsCopied = false
   let unregisterWatchAssets: () => void | null = null
   const originalCwd = cwd()
+
+  const entryPoint =
+    typeof main === 'string'
+      ? main
+      : Array.isArray(main)
+        ? main[0]
+        : main['index'] ?? main['main'] ?? main['src/index'] ?? main['src/main']
+
+  const additionalEntryPoints =
+    typeof main === 'string'
+      ? []
+      : Array.isArray(main)
+        ? main.slice(1)
+        : Object.keys(main)
+            .filter((key) => main[key] !== entryPoint)
+            .map((key) => main[key])
+
+  if (!entryPoint) {
+    throw new Error(
+      'No entry point found. Please specify a "index" or "main" option in your tsup main field.',
+    )
+  }
 
   try {
     // Change directory to the project root so that tsup will be able to find the tsconfig.json and look for the package.json dependencies
@@ -77,6 +110,30 @@ export default async function runExecutor(
       tsconfig: tsConfig,
       onSuccess: async () => {
         if (!assetsCopied) {
+          updatePackageJson(
+            {
+              ...options,
+              main: resolve(outDir ?? 'dist', entryPoint),
+              projectRoot,
+              additionalEntryPoints: createEntryPoints(
+                additionalEntryPoints.map((item) =>
+                  resolve(outDir ?? 'dist', item),
+                ),
+                context.root,
+              ),
+              // @ts-expect-error iife is not a valid format for tsup
+              format:
+                typeof options.format === 'string'
+                  ? [options.format]
+                  : options.format,
+              // As long as d.ts files match their .js counterparts, we don't need to emit them.
+              // TSC can match them correctly based on file names.
+              skipTypings: true,
+            },
+            context,
+            target,
+            dependencies,
+          )
           await assetHandler.processAllAssetsOnce()
           assetsCopied = true
           if (options.watch) {
