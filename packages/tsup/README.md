@@ -1,6 +1,9 @@
 # nx-tsup
 
-A plugin to help make nx with yarn a pleasant experience.
+tsup executor for nx.
+
+Tsup is a zero-config TypeScript bundler powered by esbuild. It's fast, supports TypeScript out of the box, and can be extended via plugins.
+It's also provides ability to generate types for your bundled code, esm and cjs bundles, supports decorators, etc.
 
 ## Install
 

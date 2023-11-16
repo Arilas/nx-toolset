@@ -91,11 +91,18 @@
     },
     "outputPath": {
       "type": "string",
-      "description": "The output path of the generated files relative to workspace root",
+      "description": "The output path of outputs relative to workspace root",
       "$default": {
         "$source": "argv",
         "index": 0
       },
+      "x-completion-type": "directory",
+      "x-prompt": "Which folder should be published?"
+    },
+    "outDir": {
+      "type": "string",
+      "description": "The output directory for the generated files relative to outputPath",
+      "default": "dist",
       "x-completion-type": "directory",
       "x-prompt": "Which folder should be published?"
     }

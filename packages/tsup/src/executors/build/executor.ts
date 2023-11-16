@@ -11,8 +11,16 @@ export default async function runExecutor(
   options: BuildExecutorSchema,
   context: ExecutorContext,
 ) {
-  const { main, outputPath, tsConfig, typings, sourceMap, assets, ...rest } =
-    options
+  const {
+    main,
+    outputPath,
+    outDir,
+    tsConfig,
+    typings,
+    sourceMap,
+    assets,
+    ...rest
+  } = options
   const projectRoot = resolve(
     context.root,
     context.workspace.projects[context.projectName].root,
@@ -45,7 +53,7 @@ export default async function runExecutor(
               ),
       dts: typings,
       sourcemap: sourceMap,
-      outDir: resolve(context.root, outputPath),
+      outDir: resolve(context.root, outputPath, outDir ?? 'dist'),
       tsconfig: tsConfig,
       onSuccess: async () => {
         if (!assetsCopied) {
