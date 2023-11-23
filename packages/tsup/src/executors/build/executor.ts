@@ -22,13 +22,10 @@ export default async function runExecutor(
     tsConfig,
     typings,
     sourceMap,
+    skipPackageJsonGeneration = false,
     assets = [],
     ...rest
   } = options
-  // const projectRoot = resolve(
-  //   context.root,
-  //   context.workspace.projects[context.projectName].root,
-  // )
 
   if (options.clean) {
     try {
@@ -49,10 +46,6 @@ export default async function runExecutor(
     context,
     options.tsConfig,
   )
-  console.log('outputPath', outputPath)
-  console.log('context.root', context.root)
-  console.log('projectRoot', projectRoot)
-  console.log('tmpTsConfig', tmpTsConfig)
   if (tmpTsConfig) {
     options.tsConfig = tmpTsConfig
   }
@@ -75,23 +68,11 @@ export default async function runExecutor(
         ? main[0]
         : main['index'] ?? main['main'] ?? main['src/index'] ?? main['src/main']
 
-  const additionalEntryPoints =
-    typeof main === 'string'
-      ? []
-      : Array.isArray(main)
-        ? main.slice(1)
-        : Object.keys(main)
-            .filter((key) => main[key] !== entryPoint)
-            .map((key) => main[key])
-
   if (!entryPoint) {
     throw new Error(
       'No entry point found. Please specify a "index" or "main" option in your tsup main field.',
     )
   }
-
-  console.log('entryPoint', entryPoint)
-  console.log('additionalEntryPoints', additionalEntryPoints)
 
   try {
     // Change directory to the project root so that tsup will be able to find the tsconfig.json and look for the package.json dependencies
@@ -116,26 +97,28 @@ export default async function runExecutor(
       tsconfig: tsConfig,
       onSuccess: async () => {
         if (!assetsCopied) {
-          updatePackageJson(
-            {
-              ...options,
-              outputPath: resolve(context.root, outputPath),
-              entries: typeof main === 'string' ? [main] : main,
-              outDir: outDir ?? 'dist',
-              projectRoot,
-              // @ts-expect-error iife is not a valid format for tsup
-              format:
-                typeof options.format === 'string'
-                  ? [options.format]
-                  : options.format,
-              // As long as d.ts files match their .js counterparts, we don't need to emit them.
-              // TSC can match them correctly based on file names.
-              skipTypings: true,
-            },
-            context,
-            target,
-            dependencies,
-          )
+          if (!skipPackageJsonGeneration) {
+            updatePackageJson(
+              {
+                ...options,
+                outputPath: resolve(context.root, outputPath),
+                entries: typeof main === 'string' ? [main] : main,
+                outDir: outDir ?? 'dist',
+                projectRoot,
+                // @ts-expect-error iife is not a valid format for tsup
+                format:
+                  typeof options.format === 'string'
+                    ? [options.format]
+                    : options.format,
+                // As long as d.ts files match their .js counterparts, we don't need to emit them.
+                // TSC can match them correctly based on file names.
+                skipTypings: true,
+              },
+              context,
+              target,
+              dependencies,
+            )
+          }
           await assetHandler.processAllAssetsOnce()
           assetsCopied = true
           if (options.watch) {

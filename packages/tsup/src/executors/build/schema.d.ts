@@ -6,6 +6,7 @@ export interface BuildExecutorSchema {
   outputPath: string
   outDir?: Options['outDir']
   generateExportsField?: boolean
+  skipPackageJsonGeneration?: boolean
   format?: Options['format']
   clean?: boolean
   sourceMap?: Options['sourcemap']
