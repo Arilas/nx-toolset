@@ -16,9 +16,11 @@ export default async function executor(
   { outputPath, publishTag, access }: PublishExecutorSchema,
   context: ExecutorContext,
 ) {
+
+  const projectPath = context.projectGraph.nodes[context.projectName].data.root
   const projectRoot = resolve(
     context.root,
-    context.workspace.projects[context.projectName].root,
+    projectPath,
   )
   const outputPathAbsolute = resolve(context.root, outputPath)
 
@@ -53,7 +55,7 @@ export default async function executor(
           packageJson.workspaces = [
             outputPath,
             ...(workspaces || []).filter(
-              (w) => w !== context.workspace.projects[context.projectName].root,
+              (w) => w !== projectPath,
             ),
           ]
         } else {
@@ -63,7 +65,7 @@ export default async function executor(
               outputPath,
               ...(workspaces.packages || []).filter(
                 (w) =>
-                  w !== context.workspace.projects[context.projectName].root,
+                  w !== projectPath,
               ),
             ],
           }
