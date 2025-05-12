@@ -46,6 +46,16 @@
       "default": false,
       "description": "Generate typings"
     },
+    "dtsResolve": {
+      "type": "boolean",
+      "default": false,
+      "description": "Resolve dts files"
+    },
+    "experimentalDts": {
+      "type": "boolean",
+      "default": false,
+      "description": "Use experimental dts generation"
+    },
     "jsxFactory": {
       "type": "string",
       "description": "The JSX factory to use"
