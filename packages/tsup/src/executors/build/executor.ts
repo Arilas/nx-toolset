@@ -101,6 +101,7 @@ export default async function runExecutor(
             updatePackageJson(
               {
                 ...options,
+                typings: options.typings || options.dtsResolve || options.experimentalDts,
                 outputPath: resolve(context.root, outputPath),
                 entries: typeof main === 'string' ? [main] : main,
                 outDir: outDir ?? 'dist',

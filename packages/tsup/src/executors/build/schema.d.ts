@@ -11,6 +11,8 @@ export interface BuildExecutorSchema {
   clean?: boolean
   sourceMap?: Options['sourcemap']
   typings?: Options['dts']
+  dtsResolve?: Options['dtsConfig']
+  experimentalDts?: Options['experimentalDts']
   watch?: boolean
   tsConfig?: Options['tsconfig']
 }
